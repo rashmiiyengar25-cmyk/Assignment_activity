@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit Response' if response else 'New Assignment Response' }}{% endblock %}
+
+{% block content %}
+<div class="intro-card">
+    <h1>Assignment Design Assistant</h1>
+    <p>
+        Fill in each section below in the same order the assignment brief expects.
+        Save a draft as often as you like — nothing is lost — and click
+        <strong>Submit Final</strong> only when a section is genuinely finished.
+        This structure (proposal → resources → plan → design → build → log →
+        testing → evaluation) is the same shape you'll want for <em>any</em>
+        application-development assignment, in any language or platform.
+    </p>
+</div>
+
+<form method="POST" action="{{ url_for('submit') }}" class="assignment-form">
+    {% if response %}
+        <input type="hidden" name="response_id" value="{{ response.id }}">
+    {% endif %}
+
+    <section class="card">
+        <h2>Cover Sheet</h2>
+        <div class="grid-2">
+            <label>Student USN *
+                <input type="text" name="student_usn" required
+                       value="{{ response.student_usn if response else '' }}">
+            </label>
+            <label>Student Name *
+                <input type="text" name="student_name" required
+                       value="{{ response.student_name if response else '' }}">
+            </label>
+            <label>Tutor
+                <input type="text" name="tutor_name"
+                       value="{{ response.tutor_name if response else '' }}">
+            </label>
+            <label>Unit Code
+                <input type="text" name="unit_code"
+                       value="{{ response.unit_code if response else 'H6S9 46' }}">
+            </label>
+            <label>Unit Title
+                <input type="text" name="unit_title"
+                       value="{{ response.unit_title if response else 'Computing: Applications Development' }}">
+            </label>
+            <label>Date Due
+                <input type="date" name="date_due"
+                       value="{{ response.date_due.isoformat() if response and response.date_due else '' }}">
+            </label>
+            <label>Date of Submission
+                <input type="date" name="date_submitted"
+                       value="{{ response.date_submitted.isoformat() if response and response.date_submitted else today }}">
+            </label>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>Application Basics</h2>
+        <div class="grid-2">
+            <label>Application Name
+                <input type="text" name="app_name" placeholder="e.g. StudyBuddy"
+                       value="{{ response.app_name if response else '' }}">
+            </label>
+            <label>Application Type
+                <select name="app_type">
+                    <option value="">-- select --</option>
+                    {% for t in app_types %}
+                        <option value="{{ t }}" {% if response and response.app_type == t %}selected{% endif %}>{{ t }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>Development Environment
+                <select name="dev_environment">
+                    <option value="">-- select --</option>
+                    {% for env in dev_environments %}
+                        <option value="{{ env }}" {% if response and response.dev_environment == env %}selected{% endif %}>{{ env }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+    </section>
+
+    {% for group in field_groups %}
+    <section class="card task-group">
+        <h2>{{ group.task }}</h2>
+        {% for field_name, label, hint, marks in group.fields %}
+        <div class="field-block">
+            <label for="{{ field_name }}">
+                {{ label }} <span class="marks">({{ marks }} marks)</span>
+            </label>
+            <p class="hint">{{ hint }}</p>
+            <textarea id="{{ field_name }}" name="{{ field_name }}" rows="5"
+                      placeholder="Write your answer here...">{{ response[field_name] if response else '' }}</textarea>
+        </div>
+        {% endfor %}
+    </section>
+    {% endfor %}
+
+    <div class="actions">
+        <button type="submit" name="action" value="draft" class="btn btn-secondary">Save Draft</button>
+        <button type="submit" name="action" value="submit" class="btn btn-primary">Submit Final</button>
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Assignment Design Assistant{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header class="topbar">
+        <div class="wrap">
+            <a class="brand" href="{{ url_for('index') }}">📝 Assignment Design Assistant</a>
+            <nav>
+                <a href="{{ url_for('index') }}">New / Home</a>
+                <a href="{{ url_for('admin') }}">Tutor / Admin</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="wrap">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-stack">
+                {% for category, message in messages %}
+                    <div class="flash flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="wrap footer">
+        Built for H6S9 46 · Computing: Applications Development — fill this in once, reuse the structure for any assignment.
+    </footer>
+</body>
+</html>

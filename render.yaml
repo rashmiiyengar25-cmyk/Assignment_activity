@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: assignment-design-assistant
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: assignment-writer-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_PASSWORD
+        sync: false   # set this manually in the Render dashboard
+
+databases:
+  - name: assignment-writer-db
+    plan: free

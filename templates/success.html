@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Saved — {{ response.student_name }}{% endblock %}
+
+{% block content %}
+<div class="intro-card">
+    <h1>{{ 'Response' if admin_view is defined else 'Saved' }}
+        <span class="status-pill status-{{ response.status }}">{{ response.status }}</span>
+    </h1>
+    <p>
+        <strong>{{ response.student_name }}</strong> ({{ response.student_usn }}) —
+        {{ response.app_name or 'Untitled application' }}
+        {% if response.app_type %} · {{ response.app_type }}{% endif %}
+    </p>
+    {% if not admin_view %}
+    <p>
+        <a class="btn btn-secondary" href="{{ url_for('edit', response_id=response.id) }}">Continue editing</a>
+        <a class="btn btn-secondary" href="{{ url_for('index') }}">Start a new response</a>
+    </p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2>Cover Sheet</h2>
+    <table class="kv-table">
+        <tr><th>Unit</th><td>{{ response.unit_code }} — {{ response.unit_title }}</td></tr>
+        <tr><th>Tutor</th><td>{{ response.tutor_name or '—' }}</td></tr>
+        <tr><th>Date Due</th><td>{{ response.date_due or '—' }}</td></tr>
+        <tr><th>Date Submitted</th><td>{{ response.date_submitted or '—' }}</td></tr>
+        <tr><th>Development Environment</th><td>{{ response.dev_environment or '—' }}</td></tr>
+    </table>
+</div>
+
+{% for group in response.FIELD_GROUPS %}
+<div class="card">
+    <h2>{{ group.task }}</h2>
+    {% for field_name, label, hint, marks in group.fields %}
+    <div class="field-block">
+        <h3>{{ label }} <span class="marks">({{ marks }} marks)</span></h3>
+        <p class="answer">{{ response[field_name] or '—' }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endfor %}
+{% endblock %}

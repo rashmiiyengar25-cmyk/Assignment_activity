@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Tutor Dashboard{% endblock %}
+
+{% block content %}
+<div class="intro-card">
+    <h1>Tutor Dashboard</h1>
+    <p>{{ responses|length }} response(s) on record.</p>
+    <p>
+        <a class="btn btn-primary" href="{{ url_for('export_excel') }}">⬇ Export All to Excel</a>
+        <a class="btn btn-secondary" href="{{ url_for('admin_logout') }}">Log Out</a>
+    </p>
+</div>
+
+<div class="card">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>USN</th>
+                <th>Name</th>
+                <th>Application</th>
+                <th>Status</th>
+                <th>Last Updated</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in responses %}
+            <tr>
+                <td>{{ r.student_usn }}</td>
+                <td>{{ r.student_name }}</td>
+                <td>{{ r.app_name or '—' }} <span class="tag">{{ r.app_type or '' }}</span></td>
+                <td><span class="status-pill status-{{ r.status }}">{{ r.status }}</span></td>
+                <td>{{ r.updated_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td><a href="{{ url_for('admin_view_response', response_id=r.id) }}">View</a></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6">No responses submitted yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
